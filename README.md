@@ -56,11 +56,11 @@ _also_ means we should stop the `setInterval` from running in the background. We
 need some way of cleaning up our side effect when the component is no longer
 needed!
 
-To demonstrate the issue, try clicking the "Toggle Clock" button — you'll
-likely see a warning message like this:
+To demonstrate the issue, try clicking the "Toggle Clock" button — you may see a
+warning message like this:
 
 ```txt
-index.js:1 Warning: Can't perform a React state update on an unmounted
+index.tsx:1 Warning: Can't perform a React state update on an unmounted
 component. This is a no-op, but it indicates a memory leak in your application.
 To fix, cancel all subscriptions and asynchronous tasks in a useEffect cleanup
 function.
@@ -96,9 +96,12 @@ function Clock() {
 ```
 
 If you run this app again in the browser, and click the "Toggle Clock" button,
-you'll notice we no longer get that error message. That's because we have
-successfully cleaned up after the unmounted component by running
-`clearInterval`.
+functionally nothing changes. However, if you got the error the first time,
+you'll notice we no longer receive it. That's because we have successfully
+cleaned up after the unmounted component by running `clearInterval`.
+
+Even if you don't get the error message, it is still an important step to do as
+we don't want code to continuously run in the background when unecessary.
 
 ## Cleanup Function Lifecycle
 
@@ -108,16 +111,16 @@ So far, we've explained the order of operations for our components like this:
 render -> useEffect -> setState -> re-render -> useEffect
 ```
 
-Where does the cleanup function fit in this order of operations? In general,
-it is called by React **after the component re-renders** as a result of setting
+Where does the cleanup function fit in this order of operations? In general, it
+is called by React **after the component re-renders** as a result of setting
 state and **before the `useEffect` callback is called**:
 
 ```txt
 render -> useEffect -> setState -> re-render -> cleanup -> useEffect
 ```
 
-If the change (as in our example) causes the component to be unmounted,
-the cleanup is the last thing that occurs in the component's life:
+If the change (as in our example) causes the component to be unmounted, the
+cleanup is the last thing that occurs in the component's life:
 
 ```txt
 render -> useEffect -> setState -> re-render -> cleanup
@@ -156,5 +159,6 @@ code, but it's good to know what scenarios make this functionality useful.
 - [React Docs on useEffect][use-effect-hook]
 - [A Complete Guide to useEffect](https://overreacted.io/a-complete-guide-to-useeffect/)
 
-[side-effects]: https://en.wikipedia.org/wiki/Side_effect_(computer_science)#:~:text=In%20computer%20science%2C%20an%20operation,the%20invoker%20of%20the%20operation.
+[side-effects]:
+  https://en.wikipedia.org/wiki/Side_effect_(computer_science)#:~:text=In%20computer%20science%2C%20an%20operation,the%20invoker%20of%20the%20operation.
 [use-effect-hook]: https://reactjs.org/docs/hooks-effect.html
